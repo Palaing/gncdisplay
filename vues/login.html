@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Identifiez vous</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+</head>
+<body>
+<div class="container" style="max-width: 480px;">
+	<form method='POST' action='/login' accept-charset='utf-8'>
+		% if get('redirecturl'):
+		<input type="hidden" name="redirecturl" id="" value="{{redirecturl}}" />
+		% end			
+		<div class="row mb-4"><h3>Connexion</h3></div>
+		% if get('message'):
+		<div class="row mb-4 alert alert-danger justify-content-center" role="alert">{{message}}</div>
+		% end			
+		<div class="mb-4">
+			<input type="email" id="email" name="email" class="form-control" required />
+			<label class="form-label" for="email">Adresse email</label>
+		</div>		
+		<div class="mb-4">
+			<input type="password" id="password" name="password" class="form-control" required />
+			<label class="form-label" for="password">Mot de passe</label>
+		</div>
+		<div class="row mb-4">
+			<div class="col d-flex justify-content-center">
+				<button type="submit" class="btn btn-primary btn-block">Me connecter</button>
+			</div>
+			<div class="col">
+				<a href="/forgotpwd">Mot de passe inconnu ?</a>
+			</div>
+		</div>
+	</form>
+</div>
+</body>
+</html>
