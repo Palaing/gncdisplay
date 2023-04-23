@@ -50,8 +50,8 @@ def do_forgotpwd():
 	# send link by mail to user
 	link = (request.app.config['base_url'] 
 			+ '/resetpwd/' + email + '/' + token)
-	# res = sendmail(msgs.reset_password.format(user[1],link), email)
-	res = sendmail(msgs.reset_password.format(user[0], link))
+	res = sendmail(msgs.reset_password.format(user[0],link), email)
+	# res = sendmail(msgs.reset_password.format(user[0], link)) # default address for debug
 	if res == "success":
 		log(str(datetime.now()) + ': sent password-reset link to ' + email)
 	else: 

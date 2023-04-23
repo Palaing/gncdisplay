@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 	<style type="text/css">
 	body {
-		background: url('img/IMG_20230401_125037.jpg') no-repeat center center fixed;
+		background: url('/img/IMG_20230401_125037.jpg') no-repeat center center fixed;
 		background-size: cover;
 		text-align: center;
 		font-family: Verdana, Arial, Helvetica, sans-serif;	
@@ -14,7 +14,7 @@
 	.opaquebg {
 		background: rgba(255, 255, 255, 0.9);
 	}
-	th.amount, td.amount, #balance { text-align: right; }
+	th.amount, td.amount, #balance0, #balance1 { text-align: right; }
 	.isok { color: #2a9d8f; }
 	.isnotok { color: #9b2226; }
 	.datetimein { vertical-align: top; }
@@ -22,7 +22,7 @@
 	</style>
 </head>
 <body>
-% include('vues/header.tpl', entity="SCI Les Minimes", titre="Comptes jusqu'au {}/{}/{}".format(dateup[8:],dateup[5:7], dateup[:4]))
+% include('vues/header.tpl', entity="SCI Les Minimes", titre="Comptes arrêtés au {}/{}/{} - {}".format(dateup[8:],dateup[5:7], dateup[:4], hoirs))
 <div class="container opaquebg">
 	<div class="row">
 		<div class="col text-center m-3">
@@ -41,6 +41,11 @@
 					<th scope="col">description</th>
 					<th scope="col" class="amount">montant</th>
 				</tr>
+				<tr id="solde0">
+					<th scope="col"></th>
+					<th scope="col">solde précédent</th>
+					<th scope="col" id="balance0"></th>
+				</tr>
 			</thead>
 			<tbody>		
 				% if transactions:
@@ -57,7 +62,7 @@
 				<tr>
 					<th scope="col"></th>
 					<th scope="col">solde</th>
-					<th scope="col" id="balance"></th>
+					<th scope="col" id="balance1"></th>
 				</tr>
 			</thead>
 		</table>	
@@ -69,7 +74,9 @@ const enddate = document.querySelector('#enddate');
 const tr = document.querySelectorAll("#transtable > tbody > tr");
 const firstdate = tr[0].querySelector("td").textContent;
 const dateup = new Date("{{dateup}}").toJSON().slice(0, 10);
-const balance = document.querySelector('#balance');
+const solde0 = document.querySelector('#solde0');
+const balance0 = document.querySelector('#balance0');
+const balance1 = document.querySelector('#balance1');
 
 startdate.min = firstdate;
 startdate.max = dateup;
@@ -79,9 +86,9 @@ enddate.min = firstdate;
 enddate.max = dateup;
 enddate.value = dateup;
 
-function setBalance() {
+function setBalance(stopdate, balance) {
 	let lines = [...tr].filter(line => 
-		line.querySelector("td").textContent <= enddate.value);
+		line.querySelector("td").textContent <= stopdate.value);
 	let amounts = lines.map(line => 
 		parseFloat(line.querySelector("td.amount").textContent));
 	let bvalue = amounts.reduce((a, b) => a + b, 0);
@@ -94,6 +101,8 @@ function setBalance() {
 }
 
 function filterTable() {
+	startdate.max = enddate.value;
+	enddate.min = startdate.value;
 	let td, ladate;
 	for (let i = 0; i < tr.length; i++) {
 		td = tr[i].querySelector("td");
@@ -104,7 +113,13 @@ function filterTable() {
 			tr[i].classList.add("hideme");		// cacher la ligne
 		}
 	}
-	setBalance();
+	if (startdate.value != firstdate) {
+		solde0.classList.remove("hideme"); // montrer la ligne
+	} else {
+		solde0.classList.add("hideme");		// cacher la ligne
+	}
+	setBalance(startdate, balance0);
+	setBalance(enddate, balance1);
 }
 filterTable();
 

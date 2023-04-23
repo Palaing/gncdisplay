@@ -36,3 +36,6 @@ userfile = 'path/to/user/json/file'
 # tokenfile is a json-dumped file with following format:
 # {email: [expirydate, token]}
 tokenfile = 'path/to/tokens/json/file'
+# dateupfile contains only a YYYY-MM-DD formatted date
+# that is the last date at which gnucash data are complete
+dateupfile = 'path/to/dateupfile.txt'

@@ -78,14 +78,16 @@ def show(usr, db, email=''):
 	INNER JOIN accounts a1 ON s1.account_guid=a1.guid
 	WHERE a1.code = ?
 	AND s1.value_num != '0'
-	AND t1.post_date < ?
+	AND date <= ?
 	ORDER BY t1.post_date"""
 	cur = db.execute(query, (account,today,))
 	transactions = cur.fetchall()
 	with open(dateupfile, "r") as df:
 		dateup = df.read()[:10]
+	cur.execute('SELECT name FROM accounts WHERE code = ?', (account,))
+	hoirs = cur.fetchone()[0]
 	return ftemplate('transactions.html', 
-				user=usr, transactions=transactions, dateup=dateup)
+				user=usr, transactions=transactions, dateup=dateup, hoirs=hoirs)
 	
 @error(401)
 def error401(url):
