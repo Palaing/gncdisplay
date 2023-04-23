@@ -10,8 +10,6 @@
 # Licence:		GPLv3
 #-----------------------------------------------------------------------------
 
-# TODO: move tokens to different csv file for users file security
-
 from bottle import request, response, get, post
 from helpers import log, ftemplate, getuser, changepwd, gettokens, savetokens
 import re

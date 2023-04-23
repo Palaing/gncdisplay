@@ -11,12 +11,12 @@
 #-----------------------------------------------------------------------------
 
 from bottle import template, abort
-from config import userfile, tokenfile
+from config import userfile, tokenfile #, base_url
 import re
 import json
 
-def ensureadmin(euser):
-	if not euser['isadmin']:
+def ensureadmin(usr):
+	if not usr['isadmin']:
 		abort(401)
 
 def log(msg):
@@ -27,6 +27,7 @@ def log(msg):
 def ftemplate(file,**kwargs):
 	with open('vues/' + file, 'r', encoding='utf-8') as template_file:
 		tempstring = template_file.read()
+	# kwargs['base_url'] = base_url
 	return template(tempstring,kwargs)
 	
 def validmail(email):

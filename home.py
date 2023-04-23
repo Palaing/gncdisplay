@@ -1,7 +1,7 @@
 #-----------------------------------------------------------------------------
 # Name:			app.py
 # Purpose:		"gncdisplay" app
-#				normal users routes
+#				users routes
 #
 # Author:		a.goye
 #
@@ -10,9 +10,14 @@
 # Licence:		GPLv3
 #-----------------------------------------------------------------------------
 
+# TODO: 
+# get gnucash file from Dropbox
+# review and fix URLs management
+
 from bottle import get, post, request, response, redirect, error, static_file
 from datetime import datetime
 from helpers import ensureadmin, ftemplate, getuser
+from config import dateupfile
 from datetime import datetime
 import messages as msgs
 import bcrypt
@@ -32,14 +37,14 @@ def server_static(filename):
 @get('/login')
 def login():	
 	if request.app.config['authplugin'].sessiondata():
-		redirect('/show')
-	return ftemplate('login.html', redirecturl='/show')
+		redirect('show')
+	return ftemplate('login.html', redirecturl='show')
 
 @post('/login')
 def do_login():
 	email = request.forms.getunicode('email')
 	password = request.forms.getunicode('password')
-	redirecturl = request.forms.getunicode('redirecturl', '/show')
+	redirecturl = request.forms.getunicode('redirecturl', 'show')
 	email, prenom = check_pwd(email, password)
 	if email:
 		idtoday = ':'.join([str(email), prenom, 
@@ -55,12 +60,16 @@ def do_login():
 def logout():
 	response.delete_cookie('session')
 	return ftemplate('login.html', 
-		message = msgs.logout_ok, redirecturl='/show')
+		message = msgs.logout_ok, redirecturl='show')
 
 @get('/')
+def home():
+	redirect('show')
+
 @get('/show')
-def show(euser, db):
-	account = getuser(euser['email'])[3]
+def show(usr, db, email=''):
+	email = email or usr['email']
+	account = getuser(email)[3]
 	today = datetime.now().strftime('%Y-%m-%d')
 	query = """SELECT DISTINCT SUBSTR(t1.post_date, 1, 10) as date, t1.description,
 	PRINTF("%.2f", CAST(-s1.value_num AS REAL) /s1.value_denom) AS montant 
@@ -73,7 +82,10 @@ def show(euser, db):
 	ORDER BY t1.post_date"""
 	cur = db.execute(query, (account,today,))
 	transactions = cur.fetchall()
-	return ftemplate('transactions.html', user=euser, transactions=transactions)
+	with open(dateupfile, "r") as df:
+		dateup = df.read()[:10]
+	return ftemplate('transactions.html', 
+				user=usr, transactions=transactions, dateup=dateup)
 	
 @error(401)
 def error401(url):
@@ -82,3 +94,25 @@ def error401(url):
 @error(404)
 def error404(error):
 	return ftemplate('404.html')
+
+# ########### admin routes ###########
+
+@get('/setdateup/<date>')
+def setdateup(usr, date):
+	ensureadmin(usr)
+	with open(dateupfile, "w") as df:
+		df.write(date)
+
+@get('/show/<email>')
+def showuser(usr, db, email):
+	ensureadmin(usr)
+	return show(usr, db, email)
+
+import json
+import os
+
+# @get('/osdata')
+# def osdata(usr):
+	# ensureadmin(usr)
+	# return json.dumps(dict(os.environ))
+	

@@ -18,7 +18,7 @@ class AuthPlugin(object):
 
 	name = 'authplugin'
 
-	def __init__(self, keyword='user', secret='', adminemails=['1']):
+	def __init__(self, keyword='usr', secret='', adminemails=['1']):
 		self.keyword = keyword
 		self.secret = secret
 		self.adminemails = adminemails
@@ -44,11 +44,11 @@ class AuthPlugin(object):
 			return callback		
 			
 		def wrapper(*args, **kwargs):
-			user = self.sessiondata()
-			if user:
-				kwargs[keyword] = user
+			usr = self.sessiondata()
+			if usr:
+				kwargs[keyword] = usr
 				return callback(*args, **kwargs)
 			else:
-				redirect("/login")
+				redirect("login")
 				
 		return wrapper

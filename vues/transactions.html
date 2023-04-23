@@ -22,7 +22,7 @@
 	</style>
 </head>
 <body>
-% include('vues/header.tpl', entity="SCI Les Minimes", titre="Mon compte")
+% include('vues/header.tpl', entity="SCI Les Minimes", titre="Comptes jusqu'au {}/{}/{}".format(dateup[8:],dateup[5:7], dateup[:4]))
 <div class="container opaquebg">
 	<div class="row">
 		<div class="col text-center m-3">
@@ -68,16 +68,16 @@ const startdate = document.querySelector('#startdate');
 const enddate = document.querySelector('#enddate');
 const tr = document.querySelectorAll("#transtable > tbody > tr");
 const firstdate = tr[0].querySelector("td").textContent;
-const today = new Date().toJSON().slice(0, 10);
+const dateup = new Date("{{dateup}}").toJSON().slice(0, 10);
 const balance = document.querySelector('#balance');
 
 startdate.min = firstdate;
-startdate.max = today;
+startdate.max = dateup;
 startdate.value = firstdate;
 
 enddate.min = firstdate;
-enddate.max = today;
-enddate.value = today;
+enddate.max = dateup;
+enddate.value = dateup;
 
 function setBalance() {
 	let lines = [...tr].filter(line => 
@@ -92,7 +92,6 @@ function setBalance() {
 		balance.classList.add("isnotok");
 	}
 }
-setBalance();
 
 function filterTable() {
 	let td, ladate;
@@ -107,6 +106,8 @@ function filterTable() {
 	}
 	setBalance();
 }
+filterTable();
+
 </script>
 </body>
 </html>
