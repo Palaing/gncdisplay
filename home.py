@@ -17,7 +17,7 @@
 from bottle import get, post, request, response, redirect, error, static_file
 from datetime import datetime
 from helpers import ensureadmin, ftemplate, getuser
-from config import dateupfile
+from config import dateupfile, firstyear
 from datetime import datetime
 import messages as msgs
 import bcrypt
@@ -97,6 +97,37 @@ def error401(url):
 def error404(error):
 	return ftemplate('404.html')
 
+@get('/expenses/<year>')
+def expenses(usr, db, year):
+	query = """SELECT a1.name,
+	SUM(CAST(s1.value_num AS REAL) /s1.value_denom) AS somme
+	FROM splits s1
+	INNER JOIN transactions t1 ON t1.guid=s1.tx_guid
+	INNER JOIN accounts a1 ON s1.account_guid=a1.guid 
+	WHERE a1.account_type = 'EXPENSE'
+	AND SUBSTR(t1.post_date, 1, 4) = ?
+	GROUP BY a1.guid 
+	ORDER BY somme DESC"""
+	cur = db.execute(query, (str(year),))
+	expenses = [item for item in cur.fetchall()]
+	names = [exp[0] for exp in expenses]
+	sommes = [exp[1] for exp in expenses]
+	now = datetime.now()
+	years = range(firstyear, now.year + 1)
+	return ftemplate('expenses.html', user=usr, expenses=expenses, 
+					year=year, years=years, names=names, sommes=sommes)
+
+@post('/expenses')
+def yearexpenses(usr, db):
+	year = request.forms.getunicode('year')
+	return expenses(usr, db, year)
+
+@get('/expenses')
+def lastyearexpenses(usr, db):
+	now = datetime.now()
+	lastyear = now.year - 1
+	return expenses(usr, db, lastyear)
+
 # ########### admin routes ###########
 
 @get('/setdateup/<date>')
@@ -109,12 +140,3 @@ def setdateup(usr, date):
 def showuser(usr, db, email):
 	ensureadmin(usr)
 	return show(usr, db, email)
-
-import json
-import os
-
-# @get('/osdata')
-# def osdata(usr):
-	# ensureadmin(usr)
-	# return json.dumps(dict(os.environ))
-	

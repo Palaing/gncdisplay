@@ -39,3 +39,5 @@ tokenfile = 'path/to/tokens/json/file'
 # dateupfile contains only a YYYY-MM-DD formatted date
 # that is the last date at which gnucash data are complete
 dateupfile = 'path/to/dateupfile.txt'
+# first year of accounting
+firstyear = 2018
