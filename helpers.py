@@ -11,7 +11,7 @@
 #-----------------------------------------------------------------------------
 
 from bottle import template, abort
-from config import userfile, tokenfile #, base_url
+from config import userfile, tokenfile
 import re
 import json
 
@@ -27,7 +27,6 @@ def log(msg):
 def ftemplate(file,**kwargs):
 	with open('vues/' + file, 'r', encoding='utf-8') as template_file:
 		tempstring = template_file.read()
-	# kwargs['base_url'] = base_url
 	return template(tempstring,kwargs)
 	
 def validmail(email):

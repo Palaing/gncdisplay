@@ -17,7 +17,7 @@
 from bottle import get, post, request, response, redirect, error, static_file
 from datetime import datetime
 from helpers import ensureadmin, ftemplate, getuser
-from config import dateupfile, firstyear
+from config import dateupfile, firstyear, secret
 from datetime import datetime
 import messages as msgs
 import bcrypt
@@ -49,8 +49,7 @@ def do_login():
 	if email:
 		idtoday = ':'.join([str(email), prenom, 
 							str(datetime.date(datetime.now()))])
-		response.set_cookie('session', idtoday, 
-							secret = request.app.config.get('secret'))
+		response.set_cookie('session', idtoday, secret=secret)
 		redirect(redirecturl)
 	else:
 		return ftemplate('login.html', message = msgs.connexion_failed,

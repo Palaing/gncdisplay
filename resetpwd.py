@@ -18,6 +18,7 @@ import bcrypt
 from datetime import datetime, timedelta
 import messages as msgs
 from sendmail import sendmail
+from config import secret, tmpsession_life
 import json
 	
 # validate a password with min length 6 and max length 20,
@@ -71,8 +72,7 @@ def resetpwd(email, token):
 	# send email in tmp cookie
 	content = str(email) + ':' + str(datetime.date(datetime.now()))
 	response.set_cookie('tmpsession', content, path='/',
-						secret = request.app.config.get('secret'),
-						max_age = request.app.config.get('tmpsession_life'))
+						secret=secret, max_age=tmpsession_life)
 
 	# send choose-password page
 	return ftemplate('resetpwd.html')
@@ -80,8 +80,7 @@ def resetpwd(email, token):
 @post('/resetpwd')
 def do_resetpwd():
 	# check tmp cookie
-	content = request.get_cookie('tmpsession',
-								secret = request.app.config.get('secret'))
+	content = request.get_cookie('tmpsession', secret=secret)
 	if not content:
 		return ftemplate('login.html', message=msgs.pwd_not_recorded)
 	email, sessiondate = content.split(':')

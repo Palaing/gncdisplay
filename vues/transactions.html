@@ -2,9 +2,10 @@
 <html lang="fr">
 <head>
 	<title>Mes transactions</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-	<style type="text/css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
 	body {
 		background: url('/img/IMG_20230401_125037.jpg') no-repeat center center fixed;
 		background-size: cover;
@@ -30,7 +31,6 @@
 			<input type="date" class="datetimein" name="startdate" id="startdate" onchange="filterTable();">
 			<label for="enddate"> et le </label>
 			<input type="date" class="datetimein" name="enddate" id="enddate" onchange="filterTable();">
-			<!-- <input type="submit" id="updatebutton" value="ॐ" onclick="updatelist();"/> -->
 		</div>
 	</div>
 	<div class="table-wrapper-scroll-y my-custom-scrollbar">
@@ -51,13 +51,15 @@
 				% if transactions:
 				% for row in transactions:
 				<tr>
-					<td scope="col">{{row[0] or ''}}</td>
-					<td scope="col">{{row[1] or ''}}</td>
-					<td scope="col" class="amount">{{row[2] or ''}}</td>
+					<td>{{row[0] or ''}}</td>
+					<td>{{row[1] or ''}}</td>
+					<td class="amount {{'isnotok' if float(row[2]) < 0 else 'isok'}}">{{row[2] or ''}}</td>
 				</tr>
 				% end
 				% end
 			</tbody>
+		</table>	
+		<table class="table table-striped table-sm">
 			<thead>
 				<tr>
 					<th scope="col"></th>
@@ -68,7 +70,7 @@
 		</table>	
 	</div>		
 </div>
-<script type="text/javascript">
+<script>
 const startdate = document.querySelector('#startdate');
 const enddate = document.querySelector('#enddate');
 const tr = document.querySelectorAll("#transtable > tbody > tr");
@@ -93,11 +95,8 @@ function setBalance(stopdate, balance) {
 		parseFloat(line.querySelector("td.amount").textContent));
 	let bvalue = amounts.reduce((a, b) => a + b, 0);
 	balance.textContent = bvalue.toFixed(2);
-	if (bvalue >= 0) {
-		balance.classList.remove("isnotok");
-	} else {
-		balance.classList.add("isnotok");
-	}
+	balance.classList.toggle("isok", bvalue >= 0)
+	balance.classList.toggle("isnotok", bvalue < 0)
 }
 
 function filterTable() {
@@ -107,17 +106,10 @@ function filterTable() {
 	for (let i = 0; i < tr.length; i++) {
 		td = tr[i].querySelector("td");
 		ladate = td.textContent;
-		if (ladate >= startdate.value && ladate <= enddate.value) {
-			tr[i].classList.remove("hideme"); // montrer la ligne
-		} else {
-			tr[i].classList.add("hideme");		// cacher la ligne
-		}
+		tr[i].classList.toggle("hideme", 
+			ladate < startdate.value || ladate > enddate.value)
 	}
-	if (startdate.value != firstdate) {
-		solde0.classList.remove("hideme"); // montrer la ligne
-	} else {
-		solde0.classList.add("hideme");		// cacher la ligne
-	}
+	solde0.classList.toggle("hideme", startdate.value == firstdate)
 	setBalance(startdate, balance0);
 	setBalance(enddate, balance1);
 }

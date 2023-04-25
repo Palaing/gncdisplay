@@ -10,8 +10,18 @@
 # Licence:		GPLv3
 #-------------------------------------------------------------------------------
 
+# app base url
+base_url = 'https://mywebsite.com'
 # secret key for cookies signature
 secret = "a_very_secret_phrase_to_encode_cookies"
+# lifetime of the pwd reset cookie
+tmpsession_life = 1800
+# emails of site admins
+adminemails = ['myadmin@mywebsite.com']	
+# email of postmaster
+postmaster = 'postmaster@mywebsite.com'
+# first year of accounting records
+firstyear = 2018
 
 # key for form hidden parameters encryption
 key = b'a_very_random_key'
@@ -39,5 +49,3 @@ tokenfile = 'path/to/tokens/json/file'
 # dateupfile contains only a YYYY-MM-DD formatted date
 # that is the last date at which gnucash data are complete
 dateupfile = 'path/to/dateupfile.txt'
-# first year of accounting
-firstyear = 2018

@@ -18,7 +18,7 @@ class AuthPlugin(object):
 
 	name = 'authplugin'
 
-	def __init__(self, keyword='usr', secret='', adminemails=['1']):
+	def __init__(self, keyword='usr', secret='', adminemails=['']):
 		self.keyword = keyword
 		self.secret = secret
 		self.adminemails = adminemails
