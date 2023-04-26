@@ -22,6 +22,7 @@ from datetime import datetime
 import messages as msgs
 import bcrypt
 import re
+import json
 
 def check_pwd(email, password):
 	user = getuser(email)
@@ -126,6 +127,28 @@ def lastyearexpenses(usr, db):
 	now = datetime.now()
 	lastyear = now.year - 1
 	return expenses(usr, db, lastyear)
+	
+@get('/evolution')
+def evolution(usr, db):
+	now = datetime.now()
+	years = range(firstyear, now.year)
+	query = """SELECT a1.name, SUBSTR(t1.post_date, 1, 4) as year, 
+	SUM(CAST(s1.value_num AS REAL) /s1.value_denom) AS somme
+	FROM splits s1
+	INNER JOIN accounts a1 ON s1.account_guid=a1.guid 
+	INNER JOIN transactions t1 ON t1.guid=s1.tx_guid
+	WHERE a1.account_type = 'EXPENSE'
+	AND year >= ?
+	AND year <= ?
+	GROUP BY a1.guid, year
+	ORDER BY year DESC, somme DESC"""
+	cur = db.execute(query, (str(firstyear), str(now.year - 1),))
+	res = cur.fetchall()
+	accounts = {r[0]: [0.0 for year in years] for r in res}
+	for r in res:
+		accounts[r[0]][int(r[1]) - 2018] = round(r[2], 2)
+	return ftemplate('evolution.html', user=usr, accounts=accounts,
+					years=list(years))
 
 # ########### admin routes ###########
 
@@ -139,3 +162,5 @@ def setdateup(usr, date):
 def showuser(usr, db, email):
 	ensureadmin(usr)
 	return show(usr, db, email)
+
+

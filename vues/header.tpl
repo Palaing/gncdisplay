@@ -1,9 +1,10 @@
 <div class="container opaquebg">
 	<div class="row mb-4">
 		<div class="col "><h3>{{entity}}</h3></div>
-		<div class="col text-decoration-none">
+		<div class="col-6 text-decoration-none">
 			<a href="/show" class="text-info"><i class="fa fa-user"></i> mon compte</a> - 
-			<a href="/expenses" class="text-warning"><i class="fa fa-credit-card-alt"></i> dépenses</a>
+			<a href="/expenses" class="text-info"><i class="fa fa-credit-card"></i> dépenses</a> - 
+			<a href="/evolution" class="text-info"><i class="fa fa-line-chart"></i> évolution</a>
 		</div>
 		<div class="col text-decoration-none">
 			<div class="float-right">

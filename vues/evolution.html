@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Evolution des dépenses</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@4.2.1/dist/chart.umd.min.js"></script>
+	<style>
+	body {
+		background: url('/img/IMG_20230401_125037.jpg') no-repeat center center fixed;
+		background-size: cover;
+		text-align: center;
+		font-family: Verdana, Arial, Helvetica, sans-serif;	
+	}
+	.opaquebg {
+		background: rgba(255, 255, 255, 0.9);
+	}
+	th.amount, td.amount, #balance0, #balance1 { text-align: right; }
+	.isok { color: #2a9d8f; }
+	.isnotok { color: #9b2226; }
+	.datetimein { vertical-align: top; }
+	.hideme { display: none; }
+	</style>
+</head>
+<body>
+% include('vues/header.tpl', entity="SCI Les Minimes", titre="Evolution des dépenses annuelles")
+<div class="container opaquebg">
+	<div class="row">
+		<div class="col-md-10 p-3 mx-auto">
+			<canvas id="contenu" width="600" height="400"></canvas>
+		</div>
+	</div>	
+</div>
+<script>
+
+const colors = ['#E54600', '#F55600', '#F77600', '#FF9633',
+				'#ffe270', '#b5e48c', '#99d98c', '#76c893', '#52b69a', 
+				'#34a0a4', '#168aad', '#1a759f', '#1e6091', '#184e77']
+let i = 0;
+const data = {
+  labels: {{years}},
+  datasets: [
+  % for (key, val) in accounts.items():
+    {
+      label: "{{!key}}",
+      data: {{val}},
+      backgroundColor: colors[i++],
+      cubicInterpolationMode: 'monotone',
+	  fill: true,
+    },
+  % end
+  ]
+};
+function fillCanvas() {
+	var ctx = document.getElementById('contenu').getContext('2d');
+	var lineChart = new Chart(ctx, {
+		type: 'line',
+		data: data,
+		options: {
+			scales: {
+			  y: {
+				stacked: true,
+				beginAtZero: true
+			  }
+			},
+		},
+	});
+}
+fillCanvas();
+</script>
+</body>
+</html>
+
+
