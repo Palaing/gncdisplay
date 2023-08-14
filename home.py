@@ -88,6 +88,27 @@ def show(usr, db, email=''):
 	hoirs = cur.fetchone()[0]
 	return ftemplate('transactions.html', 
 				user=usr, transactions=transactions, dateup=dateup, hoirs=hoirs)
+
+@get('/balance')
+def balance(usr, db):
+	today = datetime.now().strftime('%Y-%m-%d')
+	query = """SELECT a1.name, PRINTF("%.2f", SUM(CAST(-s1.value_num AS REAL)) /100) AS solde
+	FROM splits s1
+	INNER JOIN transactions t1 ON t1.guid=s1.tx_guid
+	INNER JOIN accounts a1 ON s1.account_guid=a1.guid
+	WHERE a1.code LIKE '450%'
+	AND s1.value_num != '0'
+	AND SUBSTR(t1.post_date, 1, 10) <= ?
+	GROUP BY a1.code
+	ORDER BY a1.code
+	"""
+	cur = db.execute(query, (today,))
+	balances = cur.fetchall()
+	total = "%.2f" % sum([float(b[1]) for b in balances])
+	with open(dateupfile, "r") as df:
+		dateup = df.read()[:10]
+	return ftemplate('balances.html', user=usr, 
+				balances=balances, dateup=dateup, total=total)
 	
 @error(401)
 def error401(url):

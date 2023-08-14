@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+	<title>Soldes des sociétaires</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<style>
+	body {
+		background: url('/img/IMG_20230401_125037.jpg') no-repeat center center fixed;
+		background-size: cover;
+		text-align: center;
+		font-family: Verdana, Arial, Helvetica, sans-serif;	
+	}
+	.opaquebg {
+		background: rgba(255, 255, 255, 0.9);
+	}
+	th.amount, td.amount, #total { text-align: right; }
+	.isok { color: #2a9d8f; }
+	.isnotok { color: #9b2226; }
+	.datetimein { vertical-align: top; }
+	.hideme { display: none; }
+	</style>
+</head>
+<body>
+% include('vues/header.tpl', entity="SCI Les Minimes", titre="Soldes arrêtés au {}/{}/{}".format(dateup[8:],dateup[5:7], dateup[:4]))
+<div class="container opaquebg">
+	<div class="table-wrapper-scroll-y my-custom-scrollbar">
+		<table class="table table-striped table-sm" id="transtable">
+			<thead>
+				<tr>
+					<th scope="col">hoirie</th>
+					<th scope="col" class="amount">solde</th>
+				</tr>
+			</thead>
+			<tbody>		
+				% if balances:
+				% for row in balances:
+				<tr>
+					<td>{{row[0] or ''}}</td>
+					<td class="amount {{'isnotok' if float(row[1]) < 0 else 'isok'}}">{{row[1] or ''}}</td>
+				</tr>
+				% end
+				% end
+				<tr>
+					<th scope="col">total sociétaires</th>
+					<th scope="col" class="amount" id="total">{{total}}</th>
+				</tr>
+			</tbody>
+		</table>	
+	</div>		
+</div>
+
+</body>
+</html>

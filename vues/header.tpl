@@ -5,6 +5,7 @@
 			<a href="/show" class="text-info"><i class="fa fa-user"></i> mon compte</a> - 
 			<a href="/expenses" class="text-info"><i class="fa fa-credit-card"></i> dépenses</a> - 
 			<a href="/evolution" class="text-info"><i class="fa fa-line-chart"></i> évolution</a>
+			<a href="/balance" class="text-info"><i class="fa fa-balance-scale"></i> soldes</a>
 		</div>
 		<div class="col text-decoration-none">
 			<div class="float-right">
